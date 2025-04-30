@@ -19,4 +19,4 @@ public interface BookManager {
 	ArrayList<Book> magazineOfThisYearInfo(int year);
 }
 
-// #develop
+// feature#1
