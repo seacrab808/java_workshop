@@ -18,3 +18,6 @@ public interface BookManager {
 	List<Book> getBooksSortedByTitle();
 	ArrayList<Book> magazineOfThisYearInfo(int year);
 }
+
+// feature#1
+// KAN-2
