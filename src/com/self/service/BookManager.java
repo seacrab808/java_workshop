@@ -1,8 +1,7 @@
 package com.self.service;
-
+ 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.self.vo.Book;
 
 public interface BookManager {
