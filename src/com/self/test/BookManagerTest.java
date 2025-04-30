@@ -10,7 +10,7 @@ import com.self.vo.Magazine;
 import com.self.vo.Novel;
    
 public class BookManagerTest {
-
+          
 	public static void main(String[] args) {
 		BookManagerImpl manager = BookManagerImpl.getInstance();
 		
