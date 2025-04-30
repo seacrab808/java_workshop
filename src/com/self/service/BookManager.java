@@ -18,3 +18,5 @@ public interface BookManager {
 	List<Book> getBooksSortedByTitle();
 	ArrayList<Book> magazineOfThisYearInfo(int year);
 }
+
+// #develop
