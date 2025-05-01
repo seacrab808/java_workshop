@@ -1,7 +1,6 @@
 package com.self.test;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.self.service.impl.BookManagerImpl;
@@ -45,59 +44,56 @@ public class BookManagerTest {
 		System.out.println("\n======= 책 개수 구하기 =======");
 		System.out.println("책 개수: " + manager.getNumberOfBooks() + "권");
 		
-		// searchBookByTitle
-		System.out.println("\n======= 같은 가격대 책 구하기 =======");
-		for(Book b : manager.searchBookByTitle("소년이 온다"))
-			System.out.println("같은 제목 책: " + b);
+	     // searchBookByTitle
+        System.out.println("\n======= 제목으로 검색 =======");
+        Map<Integer, Book> sameTitleBooks = manager.searchBookByTitle("소년이 온다");
+        for (Book b : sameTitleBooks.values()) {
+            System.out.println("같은 제목 책: " + b);
+        }
 		
-		// searchBookByPrice
-		System.out.println("\n======= 지정한 가격대 내 책 구하기 =======");
-		for(Book b : manager.searchBookByPrice(1000, 40000))
-			System.out.println("가격대 내 책: " + b);
-		
+        // searchBookByPrice
+        System.out.println("\n======= 지정한 가격대 내 책 구하기 =======");
+        Map<Integer, Book> priceBooks = manager.searchBookByPrice(1000, 40000);
+        for (Book b : priceBooks.values()) {
+            System.out.println("가격대 내 책: " + b);
+        }
+        
 		// getSumPriceOfBooks
-		System.out.println("\n======= 모든 책의 가격 합 구하기 =======");
-		int sumPrice = 0;
-		for (Book b : allBooks.values())
-			sumPrice += b.getPrice();
-		System.out.println("모든 책의 가격 합: " + sumPrice + "원");
+        System.out.println("\n======= 모든 책의 가격 합 구하기 =======");
+        System.out.println("모든 책의 가격 합: " + manager.getSumPriceOfBooks() + "원");
+
 		
 		// getAvgPriceOfBooks
-		System.out.println("\n======= 모든 책의 평균 가격 구하기 =======");
-		double avgPrice = sumPrice / allBooks.size();
-		System.out.println("모든 책의 합: " + avgPrice + "원");
+        System.out.println("\n======= 모든 책의 평균 가격 구하기 =======");
+        System.out.println("모든 책의 평균: " + manager.getAvgPriceOfBooks() + "원");
 		
 		// 추가 기능 1: 예상 완독 시간
-		System.out.println("\n======= 예상 완독 시간 구하기 =======");
-		for (Book b : allBooks.values()) {
-			if (b instanceof Magazine) {
-				Magazine m = (Magazine) b;
-				double frequency = m.getRead() * m.getContentDensity(); // 단순 계산
-				double estimatedTime = frequency * 10; // 가정: 10분 곱하기
-				System.out.printf("ISBN %d번 잡지 예상 완독 시간: %.2f분%n", m.getIsbn(), estimatedTime);
-			}
-		}
+        System.out.println("\n======= 예상 완독 시간 구하기 =======");
+        for (Book b : allBooks.values()) {
+            if (b instanceof Magazine) {
+                Magazine m = (Magazine) b;
+                double frequency = m.getRead() * m.getContentDensity();
+                double estimatedTime = frequency * 10;
+                System.out.printf("ISBN %d번 잡지 예상 완독 시간: %.2f분%n", m.getIsbn(), estimatedTime);
+            }
+        }
 		
 		// 현재 배열 출력
-		// getAllBook
-		System.out.println("\n\n============ 전체 배열 출력 ============");
-		for(Book b: manager.getAllBook()) {
-			System.out.println(b.toString());
-		}
+        System.out.println("\n\n============ 전체 배열 출력 ============");
+        for (Book b : manager.getAllBook().values()) {
+            System.out.println(b);
+        }
 		
 		// 제목 기준 오름차순 정렬 출력
-		System.out.println("\n======= 제목 기준 정렬된 책 목록 =======");
-		List<Book> sortedBooks = manager.getBooksSortedByTitle();
-		for (Book b : sortedBooks) {
-		    System.out.println(b.toString());
-		}
+        System.out.println("\n======= 제목 기준 정렬된 책 목록 =======");
+        for (Book b : manager.getBooksSortedByTitle().values()) {
+            System.out.println(b);
+        }
 		
-		System.out.println("\n======== magazineOfThisYearInfo() ========");
-		System.out.println(manager.magazineOfThisYearInfo(2023));
-		for (Book b : manager.magazineOfThisYearInfo(2023)) {
-			
-		    System.out.println(b);
-		}
+        System.out.println("\n======== magazineOfThisYearInfo() ========");
+        for (Book b : manager.magazineOfThisYearInfo(2023).values()) {
+            System.out.println(b);
+        }
 	}
 
 }
