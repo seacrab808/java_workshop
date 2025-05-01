@@ -1,26 +1,26 @@
 package com.self.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-
-// 승환님 테스트
-
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import com.self.service.BookManager;
-
 import com.self.vo.Book;
 import com.self.vo.Magazine;
 import com.self.vo.Novel;
+import com.self.exception.BookNotFoundException;
+import com.self.exception.DuplicateTitleException;
+import com.self.exception.InvalidBookTypeException;
+import com.self.exception.RecordNotFoundException;
 
 public class BookManagerImpl implements BookManager {
-	private List<Book> books = new ArrayList<>();
+	private Map<Integer, Book> books = new HashMap<>();
 	public static final int MAX_SIZE = 100;
 
 	private static BookManagerImpl service = new BookManagerImpl();
 
 	private BookManagerImpl() {
-		books = new ArrayList<>();
+		books = new HashMap<>();
 	}
 
 	public static BookManagerImpl getInstance() {
@@ -29,159 +29,138 @@ public class BookManagerImpl implements BookManager {
 
 	@Override
 	public void insertBook(Book book) {
-		books.add(book);
-		System.out.println(book.getTitle() + "등록되었습니다.");
+	    for (Book b : books.values()) {
+	        if (b.getTitle().equals(book.getTitle())) {
+	            throw new DuplicateTitleException("이미 등록된 제목입니다: " + book.getTitle());
+	        }
+	    }
+
+	    books.put(book.getIsbn(), book);
+	    System.out.println(book.getTitle() + " 등록되었습니다.");
 	}
 
 	@Override
-	public void deleteBook(int isbn) {
-		Book bookToDelete = null;
-		for (Book book : books) {
-			if(book.getIsbn() == isbn) {
-				bookToDelete = book;
-				break;
-			}
-		}
-		if (bookToDelete != null) {
-			books.remove(bookToDelete);
-			System.out.println(bookToDelete.getTitle()+"삭제되었습니다.");
-			
-		}
+	public void deleteBook(int isbn) throws RecordNotFoundException {
+	    Book removed = books.remove(isbn); // 삭제 시도
+	    if (removed == null) {
+	        throw new RecordNotFoundException("삭제할 책이 존재하지 않습니다. ISBN: " + isbn);
+	    } else {
+	        System.out.println("책 \"" + removed.getTitle() + "\" (ISBN: " + isbn + ") 삭제 완료.");
+	    }
 	}
 
 	@Override
-	public void updateBook(Book book) {
-		for (int i = 0; i < books.size(); i++) {
-			if(books.get(i).getIsbn() == book.getIsbn()) {
-				books.set(i, book);
-				System.out.println(book.getTitle()+"업데이트되었습니다.");
-			return;
-			}
-		System.out.println("업데이트할 책을 찾을 수 없습니다.");
-		}
+	public void updateBook(Book book) throws RecordNotFoundException{
+		if (!books.containsKey(book.getIsbn())) {
+            throw new RecordNotFoundException("업데이트할 도서를 찾지 못했습니다.");
+        }
+        books.put(book.getIsbn(), book); // 갱신
+        System.out.println(book.getIsbn() + " 업데이트 성공했습니다.");
 	}
 
 	@Override
 	public Book getBook(int isbn) {
-		for (Book bk : books) {
-			if (bk.getIsbn() == isbn) {
-				return bk;
-			}
+		Book book = books.get(isbn);
+		if (book == null) {
+			System.out.println("찾으시는 번호의 책이 없습니다.");
 		}
-		System.out.println("찾으시는 번호의 책이 없습니다.");
-		return null;
+		return book;
 	}
 
 	@Override
-	public List<Book> getAllBook() {
-		return books;
+	public Map<Integer, Book> getAllBook() {
+	    return new HashMap<>(books); 
 	}
 
 	@Override
 	public int getNumberOfBooks() {
-	    int numberOfBook = books.size();
-	    return numberOfBook;
+	    return books.size();
 	}
 
 	@Override
-	public List<Book> searchBookByTitle(String title) {
-		List<Book> result = new ArrayList<>();
-
-		for (Book b : books) {
-			if (b.getTitle().equals(title)) {
-				result.add(b);
-			}
-		}
-
-		if (result.isEmpty()) {
-			System.out.println("찾으시는 제목의 책이 없습니다.");
-		}
-
-		return result;
+	public Map<Integer, Book> searchBookByTitle(String title) {
+	    Map<Integer, Book> result = new HashMap<>();
+	    for (Map.Entry<Integer, Book> entry : books.entrySet()) {
+	        if (entry.getValue().getTitle().equals(title)) {
+	            result.put(entry.getKey(), entry.getValue());
+	        }
+	    }
+	    if (result.isEmpty()) {
+	        System.out.println("찾으시는 제목의 책이 없습니다.");
+	    }
+	    return result;
 	}
 
 	@Override
-	public List<Book> searchBookByPrice(int min, int max) {
-		List<Book> result = new ArrayList<>();
-
-		for (Book b : books) {
-			if (b.getPrice() > min && b.getPrice() < max) {
-				result.add(b);
-			}
-		}
-
-		if (result.isEmpty()) {
-			System.out.println("찾으시는 가격대의 책이 없습니다.");
-		}
-
-		return result;
+	public Map<Integer, Book> searchBookByPrice(int min, int max) {
+	    Map<Integer, Book> result = new HashMap<>();
+	    for (Map.Entry<Integer, Book> entry : books.entrySet()) {
+	        double price = entry.getValue().getPrice();
+	        if (price > min && price < max) {
+	            result.put(entry.getKey(), entry.getValue());
+	        }
+	    }
+	    if (result.isEmpty()) {
+	        System.out.println("찾으시는 가격대의 책이 없습니다.");
+	    }
+	    return result;
 	}
 
 	@Override
 	public double getSumPriceOfBooks() {
-		double sumPrice = 0;
-		for (Book b : books) {
-			sumPrice += b.getPrice();
-		}
-		return sumPrice;
+	    double sumPrice = 0;
+	    for (Book b : books.values()) {
+	        sumPrice += b.getPrice();
+	    }
+	    return sumPrice;
 	}
 
 	@Override
 	public double getAvgPriceOfBooks() {
-		if (books.isEmpty())
-			return 0;
-		return getSumPriceOfBooks() / books.size();
+	    if (books.isEmpty()) return 0;
+	    return getSumPriceOfBooks() / books.size();
 	}
 
-	public void estimatedReadTime(int isbn) {
-		for (Book b : books) {
-			if (b.getIsbn() == isbn) {
-				if (b instanceof Novel) {
-					double multiGenre;
-					switch (((Novel) b).getGenre()) {
-					case "로맨스":
-						multiGenre = 0.03;
-						break;
-					case "판타지":
-						multiGenre = 0.04;
-						break;
-					default:
-						multiGenre = 0.05;
-					}
-					double time = ((Novel) b).getPage() * multiGenre;
-					int hours = (int) time;
-					int minutes = (int) ((time - hours) * 60);
-					System.out.println("Novel: " + hours + "시간 " + minutes + "분");
-				} else if (b instanceof Magazine) {
-					double time = ((Magazine) b).getRead() * ((Magazine) b).getContentDensity();
-					int minutes = (int) time;
-					int seconds = (int) ((time - minutes) * 60);
-					System.out.println("Magazine: " + minutes + "분 " + seconds + "초");
-				}
-				break;
-			}
-		}
+	public void estimatedReadTime(int isbn) throws BookNotFoundException, InvalidBookTypeException {
+	    Book b = books.get(isbn);
+	    if (b == null) {
+	        throw new BookNotFoundException(isbn + " 에 해당하는 책이 없습니다.");
+	    }
+	    if (b instanceof Novel) {
+            double multiGenre;
+            switch (((Novel) b).getGenre()) {
+                case "로맨스": multiGenre = 0.03; break;
+                case "판타지": multiGenre = 0.04; break;
+                default: multiGenre = 0.05;
+            }
+            double time = ((Novel) b).getPage() * multiGenre;
+            int hours = (int) time;
+            int minutes = (int) ((time - hours) * 60);
+            System.out.println("Novel: " + hours + "시간 " + minutes + "분");
+        } else if (b instanceof Magazine) {
+            double time = ((Magazine) b).getRead() * ((Magazine) b).getContentDensity();
+            int minutes = (int) time;
+            int seconds = (int) ((time - minutes) * 60);
+            System.out.println("Magazine: " + minutes + "분 " + seconds + "초");
+        } else {
+        	throw new InvalidBookTypeException(isbn + " 에 해당한는 예외 완독 시간을 계산할 수가 없습니다.");
+        }
 	}
 	
-	public List<Book> getBooksSortedByTitle(){
-		List<Book> sortedList = new ArrayList<>(books);
-		Collections.sort(sortedList, new Comparator<Book>() {
-			@Override
-			public int compare(Book o1, Book o2) {
-				return o1.getTitle().compareTo(o2.getTitle()); // title 기준 오름차순
-			}
-		});
-		return sortedList;
+	public Map<Integer, Book> getBooksSortedByTitle() {
+	    return books.entrySet().stream()
+	        .sorted(Map.Entry.comparingByValue(Comparator.comparing(Book::getTitle)))
+	        .collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
 	}
 	
-	public ArrayList<Book> magazineOfThisYearInfo(int year) {
-		ArrayList<Book> temp= new ArrayList<>();
-		   for(Book b : books) {
-		        if(b instanceof Magazine) {
-		            if(((Magazine) b).getMyDate().getYear()==year) temp.add(b);
-		        }
-		    }
-				
-		     return temp;
-		}
+	public Map<Integer, Book> magazineOfThisYearInfo(int year) {
+	    Map<Integer, Book> result = new HashMap<>();
+	    for (Map.Entry<Integer, Book> entry : books.entrySet()) {
+	        Book b = entry.getValue();
+	        if (b instanceof Magazine && b.getMyDate() != null && b.getMyDate().getYear() == year) {
+	            result.put(entry.getKey(), b);
+	        }
+	    }
+	    return result;
+	}
 }

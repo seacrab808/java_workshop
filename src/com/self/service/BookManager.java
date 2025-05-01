@@ -1,23 +1,21 @@
 package com.self.service;
- 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.Map;
+
+import com.self.exception.RecordNotFoundException;
 import com.self.vo.Book;
 
 public interface BookManager {
 	void insertBook(Book book);
-	void deleteBook(int isbn);
-	void updateBook(Book book);
+	void deleteBook(int isbn) throws RecordNotFoundException;
+	void updateBook(Book book) throws RecordNotFoundException;
 	Book getBook(int isbn);
-	List<Book> getAllBook();
+	Map<Integer, Book> getAllBook();
 	int getNumberOfBooks();
-	List<Book> searchBookByTitle(String title);
-	List<Book> searchBookByPrice(int min, int max);
+	Map<Integer, Book> searchBookByTitle(String title);
+	Map<Integer, Book> searchBookByPrice(int min, int max);
 	double getSumPriceOfBooks();
 	double getAvgPriceOfBooks();
-	List<Book> getBooksSortedByTitle();
-	ArrayList<Book> magazineOfThisYearInfo(int year);
+	Map<Integer, Book> getBooksSortedByTitle();
+	Map<Integer, Book> magazineOfThisYearInfo(int year);
 }
-
-// feature#1
-// KAN-2
