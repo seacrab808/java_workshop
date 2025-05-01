@@ -2,7 +2,6 @@ package com.self.test;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.self.service.impl.BookManagerImpl;
 import com.self.util.MyDate;
 import com.self.vo.Book;
