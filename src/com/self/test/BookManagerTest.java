@@ -1,11 +1,11 @@
 package com.self.test;
 
 import java.util.HashMap;
+
 import java.util.Map;
 
-import com.self.exception.RecordNotFoundException;
 import com.self.exception.BookNotFoundException;
-import com.self.exception.DuplicateTitleException;
+import com.self.exception.DuplicateIsbnException;
 import com.self.exception.InvalidBookTypeException;
 import com.self.service.impl.BookManagerImpl;
 import com.self.util.MyDate;
@@ -31,7 +31,7 @@ public class BookManagerTest {
 		for (Book b : allBooks.values()) {
 			try {
 				manager.insertBook(b);
-			} catch (DuplicateTitleException e) {
+			} catch (DuplicateIsbnException e) {
 				System.out.println("예외 발생: " + e.getMessage());
 			}
 		}
@@ -39,7 +39,7 @@ public class BookManagerTest {
 		// delete
 		try {
             manager.deleteBook(123);
-        } catch (RecordNotFoundException e) {
+        } catch (BookNotFoundException e) {
             System.out.println("예외 발생: "+ e.getMessage());
         }
 
@@ -47,7 +47,7 @@ public class BookManagerTest {
 		try {
 			Book updateMagazineEx = new Magazine(345, "인재경영", "젠슨 황표씨", "인싸이트코리아", 85000, new MyDate(2023, 3, 13), 7, 1.5);
 			manager.updateBook(updateMagazineEx);
-		} catch (RecordNotFoundException e) {
+		} catch (BookNotFoundException e) {
             System.out.println("예외 발생: "+ e.getMessage());
         }
  
