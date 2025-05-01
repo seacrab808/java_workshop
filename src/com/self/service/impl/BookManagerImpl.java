@@ -9,9 +9,8 @@ import com.self.vo.Book;
 import com.self.vo.Magazine;
 import com.self.vo.Novel;
 import com.self.exception.BookNotFoundException;
-import com.self.exception.DuplicateTitleException;
+import com.self.exception.DuplicateIsbnException;
 import com.self.exception.InvalidBookTypeException;
-import com.self.exception.RecordNotFoundException;
 
 public class BookManagerImpl implements BookManager {
 	private Map<Integer, Book> books = new HashMap<>();
@@ -31,7 +30,7 @@ public class BookManagerImpl implements BookManager {
 	public void insertBook(Book book) {
 	    for (Book b : books.values()) {
 	        if (b.getTitle().equals(book.getTitle())) {
-	            throw new DuplicateTitleException("이미 등록된 제목입니다: " + book.getTitle());
+	            throw new DuplicateIsbnException("이미 등록된 제목입니다: " + book.getTitle());
 	        }
 	    }
 
@@ -40,19 +39,19 @@ public class BookManagerImpl implements BookManager {
 	}
 
 	@Override
-	public void deleteBook(int isbn) throws RecordNotFoundException {
+	public void deleteBook(int isbn) throws BookNotFoundException {
 	    Book removed = books.remove(isbn); // 삭제 시도
 	    if (removed == null) {
-	        throw new RecordNotFoundException("삭제할 책이 존재하지 않습니다. ISBN: " + isbn);
+	        throw new BookNotFoundException("삭제할 책이 존재하지 않습니다. ISBN: " + isbn);
 	    } else {
 	        System.out.println("책 \"" + removed.getTitle() + "\" (ISBN: " + isbn + ") 삭제 완료.");
 	    }
 	}
 
 	@Override
-	public void updateBook(Book book) throws RecordNotFoundException{
+	public void updateBook(Book book) throws BookNotFoundException{
 		if (!books.containsKey(book.getIsbn())) {
-            throw new RecordNotFoundException("업데이트할 도서를 찾지 못했습니다.");
+            throw new BookNotFoundException("업데이트할 도서를 찾지 못했습니다.");
         }
         books.put(book.getIsbn(), book); // 갱신
         System.out.println(book.getIsbn() + " 업데이트 성공했습니다.");

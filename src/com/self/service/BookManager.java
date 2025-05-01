@@ -2,13 +2,13 @@ package com.self.service;
 
 import java.util.Map;
 
-import com.self.exception.RecordNotFoundException;
+import com.self.exception.BookNotFoundException;
 import com.self.vo.Book;
 
 public interface BookManager {
 	void insertBook(Book book);
-	void deleteBook(int isbn) throws RecordNotFoundException;
-	void updateBook(Book book) throws RecordNotFoundException;
+	void deleteBook(int isbn) throws BookNotFoundException;
+	void updateBook(Book book) throws BookNotFoundException;
 	Book getBook(int isbn);
 	Map<Integer, Book> getAllBook();
 	int getNumberOfBooks();
