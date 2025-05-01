@@ -21,6 +21,7 @@ public abstract class Book {
 		this.author = author;
 		this.publisher = publisher;
 		this.price = price;
+		this.myDate = myDate;
 	}
 
 	public int getIsbn() {
