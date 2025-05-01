@@ -1,7 +1,8 @@
 package com.self.test;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.self.service.impl.BookManagerImpl;
 import com.self.util.MyDate;
@@ -15,17 +16,17 @@ public class BookManagerTest {
 		BookManagerImpl manager = BookManagerImpl.getInstance();
 		
 		// 부모 틀에 자식 객체 생성
-		List<Book> allBooks = new ArrayList<Book>();
-        allBooks.add(new Magazine(123, "코스모폴리탄", "장원영", "허스트중앙", 30000, new MyDate(2025, 4, 13), 3, 1.7));
-        allBooks.add(new Magazine(345, "인재경영", "젠슨 황표", "인싸이트코리아", 80000, new MyDate(2023, 3, 13), 5, 1.4));
-        allBooks.add(new Magazine(678, "인재경영2", "젠슨스", "인싸이트코리아", 75000, new MyDate(2021, 7, 13), 5, 1.2));
-        allBooks.add(new Novel(456, "소년이 온다", "한강", "창비", 13500, new MyDate(2015, 6, 13), "산문", 216));
-        allBooks.add(new Novel(555, "소년이 온다", "한강", "창비", 14000, new MyDate(2022, 8, 13), "산문", 216));
-        allBooks.add(new Novel(567, "쇼펜하우어 인생수업", "쇼펜하우어", "HIGHEST", 15750, new MyDate(2023, 7, 13), "철학", 320));
+		Map<Integer, Book> allBooks = new HashMap<>();
+        allBooks.put(123, new Magazine(123, "코스모폴리탄", "장원영", "허스트중앙", 30000, new MyDate(2025, 4, 13), 3, 1.7));
+        allBooks.put(345, new Magazine(345, "인재경영", "젠슨 황표", "인싸이트코리아", 80000, new MyDate(2023, 3, 13), 5, 1.4));
+        allBooks.put(678, new Magazine(678, "인재경영2", "젠슨스", "인싸이트코리아", 75000, new MyDate(2021, 7, 13), 5, 1.2));
+        allBooks.put(456, new Novel(456, "소년이 온다", "한강", "창비", 13500, new MyDate(2015, 6, 13), "산문", 216));
+        allBooks.put(555, new Novel(555, "소년이 온다", "한강", "창비", 14000, new MyDate(2022, 8, 13), "산문", 216));
+        allBooks.put(567, new Novel(567, "쇼펜하우어 인생수업", "쇼펜하우어", "HIGHEST", 15750, new MyDate(2023, 7, 13), "철학", 320));
 
 		
 		// insert
-		for(Book b : allBooks) {
+		for(Book b : allBooks.values()) {
 			manager.insertBook(b);
 		}
 		
@@ -57,7 +58,7 @@ public class BookManagerTest {
 		// getSumPriceOfBooks
 		System.out.println("\n======= 모든 책의 가격 합 구하기 =======");
 		int sumPrice = 0;
-		for (Book b : allBooks)
+		for (Book b : allBooks.values())
 			sumPrice += b.getPrice();
 		System.out.println("모든 책의 가격 합: " + sumPrice + "원");
 		
@@ -68,7 +69,7 @@ public class BookManagerTest {
 		
 		// 추가 기능 1: 예상 완독 시간
 		System.out.println("\n======= 예상 완독 시간 구하기 =======");
-		for (Book b : allBooks) {
+		for (Book b : allBooks.values()) {
 			if (b instanceof Magazine) {
 				Magazine m = (Magazine) b;
 				double frequency = m.getRead() * m.getContentDensity(); // 단순 계산
@@ -92,7 +93,9 @@ public class BookManagerTest {
 		}
 		
 		System.out.println("\n======== magazineOfThisYearInfo() ========");
-		for (Book b : ((BookManagerImpl) allBooks).magazineOfThisYearInfo(2023)) {
+		System.out.println(manager.magazineOfThisYearInfo(2023));
+		for (Book b : manager.magazineOfThisYearInfo(2023)) {
+			
 		    System.out.println(b);
 		}
 	}
